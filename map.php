@@ -57,9 +57,33 @@
         color: var(--white);
     }
 
+    .map-switcher {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 10;
+        background: var(--white);
+        padding: 5px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 5px;
+    }
+
+    .map-switcher select {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-family: inherit;
+        font-weight: 500;
+        color: var(--text-main);
+        outline: none;
+        cursor: pointer;
+    }
+
     /* SVG Styling */
     .building {
-        fill: #94a3b8;
+        fill: rgba(148, 163, 184, 0.4); /* Make them semi-transparent over the image */
         stroke: #334155;
         stroke-width: 2;
         transition: fill 0.3s, filter 0.3s;
@@ -67,12 +91,12 @@
     }
 
     .building:hover {
-        fill: var(--accent);
+        fill: rgba(6, 182, 212, 0.6); /* Cyan hover */
         filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.2));
     }
 
     .building.active {
-        fill: #f59e0b; /* Orange for active/selected */
+        fill: rgba(245, 158, 11, 0.7); /* Orange */
         stroke: #b45309;
         stroke-width: 3;
     }
@@ -84,6 +108,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
     }
+
 
     /* Active route */
     .animated-route {
@@ -136,41 +161,36 @@
 
 <div class="dashboard-card" style="margin-bottom: 0; padding: 1rem;">
     <div class="map-container-inner" id="mapWrapper">
+        
+        <div class="map-switcher">
+            <select id="floorSelect">
+                <option value="campus.jpg" data-w="1200" data-h="800">Campus Layout</option>
+                <option value="ground_floor.jpg" data-w="800" data-h="1200">Building B - Ground Floor</option>
+                <option value="first_floor.jpg" data-w="800" data-h="1200">Building B - First Floor</option>
+                <option value="second_floor.jpg" data-w="800" data-h="1200">Building B - Second Floor</option>
+                <option value="third_floor.jpg" data-w="800" data-h="1200">Building B - Third Floor</option>
+            </select>
+        </div>
+
         <div class="map-tooltip" id="mapTooltip">
             <div class="tooltip-title" id="tooltipTitle">Building Name</div>
             <div id="tooltipDesc">Description</div>
         </div>
         
         <!-- SVG Canvas representing the Campus -->
-        <!-- viewBox 0 0 800 600 -->
-        <svg id="campus-map" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
-            <!-- Background Layer -->
-            <rect width="800" height="600" fill="#eef2f6" />
+        <!-- viewBox matches the intrinsic resolution of the background image -->
+        <svg id="campus-map" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+            <!-- Background Image Layer -->
+            <!-- Note: The user MUST place images in assets/images/ with these names -->
+            <image id="map-bg-image" href="assets/images/campus.jpg" width="1200" height="800" x="0" y="0" />
             
-            <!-- Roads/Paths (Visual only, not logical routing edges) -->
-            <path d="M 100,100 L 200,150 L 300,150" class="path-line" />
-            <path d="M 200,150 L 250,250 L 200,300" class="path-line" />
-            <path d="M 250,250 L 400,250" class="path-line" />
-            
-            <!-- Buildings (IDs match our database 'svg_id') -->
-            <!-- Main Administration (bldg-admin) around 100,100 -->
-            <rect id="bldg-admin" class="building" x="60" y="60" width="80" height="80" rx="8" 
-                  data-name="Main Administration" data-desc="Administrative offices and Registrar" />
-            
-            <!-- CS Dept (bldg-cs) around 300,150 -->
-            <polygon id="bldg-cs" class="building" points="260,110 340,110 340,190 300,210 260,190" 
-                     data-name="Computer Science Dept" data-desc="CS Dept, Labs and Faculty offices" />
-            
-            <!-- Library (bldg-library) around 200,300 -->
-            <circle id="bldg-library" class="building" cx="200" cy="300" r="50" 
-                    data-name="Central Library" data-desc="Main campus library spanning 3 floors" />
-            
-            <!-- Student Center (bldg-student-center) around 400,250 -->
-            <rect id="bldg-student-center" class="building" x="350" y="200" width="100" height="100" rx="15" 
-                  data-name="Student Center" data-desc="Cafeteria, recreation, and student union" />
-             
-            <!-- A dynamic group for drawing routes -->
+            <!-- Nodes logic for rendering routes -->
             <g id="route-layer"></g>
+
+            <!-- Destination Marker -->
+            <g id="dest-marker" style="display:none; transform-origin: center; animation: pulse 1.5s infinite;">
+                <circle cx="0" cy="0" r="10" fill="var(--accent)" stroke="#fff" stroke-width="3" />
+            </g>
         </svg>
 
         <div class="map-controls">

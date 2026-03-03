@@ -178,16 +178,19 @@ $nodes = $pdo->query("SELECT id, name FROM nodes ORDER BY name")->fetchAll(PDO::
     <!-- We inline the same map structure here for routing visualization. 
          Normally we might componentize this more, but we just want the SVG -->
     <div class="map-container-inner" id="mapWrapper" style="box-shadow: var(--shadow);">
-        <svg id="campus-map" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
-            <rect width="800" height="600" fill="#eef2f6" />
-            <path d="M 100,100 L 200,150 L 300,150" class="path-line" />
-            <path d="M 200,150 L 250,250 L 200,300" class="path-line" />
-            <path d="M 250,250 L 400,250" class="path-line" />
-            
-            <rect id="bldg-admin" class="building" x="60" y="60" width="80" height="80" rx="8" />
-            <polygon id="bldg-cs" class="building" points="260,110 340,110 340,190 300,210 260,190" />
-            <circle id="bldg-library" class="building" cx="200" cy="300" r="50" />
-            <rect id="bldg-student-center" class="building" x="350" y="200" width="100" height="100" rx="15" />
+        
+        <div class="map-switcher" style="position: absolute; top:20px; left:20px; z-index:10;">
+            <select id="floorSelect" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                <option value="campus.jpg" data-w="1200" data-h="800">Campus Layout</option>
+                <option value="ground_floor.jpg" data-w="800" data-h="1200">Building B - Ground Floor</option>
+                <option value="first_floor.jpg" data-w="800" data-h="1200">Building B - First Floor</option>
+                <option value="second_floor.jpg" data-w="800" data-h="1200">Building B - Second Floor</option>
+                <option value="third_floor.jpg" data-w="800" data-h="1200">Building B - Third Floor</option>
+            </select>
+        </div>
+
+        <svg id="campus-map" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+            <image id="map-bg-image" href="assets/images/campus.jpg" width="1200" height="800" x="0" y="0" />
             
             <!-- Nodes logic for rendering routes -->
             <g id="route-layer"></g>
